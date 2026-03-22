@@ -6,35 +6,63 @@ function sanitizeString(value) {
     .trim();
 }
 
-function sanitizeValue(value) {
+function isPlainObject(value) {
+  return Object.prototype.toString.call(value) === "[object Object]";
+}
+
+function isDangerousKey(key) {
+  return key === "__proto__" || key === "constructor" || key === "prototype" || key.indexOf("$") !== -1 || key.indexOf(".") !== -1;
+}
+
+function sanitizeValueInPlace(container, key) {
+  const value = container[key];
+
   if (Array.isArray(value)) {
-    return value.map(sanitizeValue);
+    value.forEach(function (item, index) {
+      if (typeof item === "string") {
+        value[index] = sanitizeString(item);
+        return;
+      }
+
+      if (isPlainObject(item)) {
+        sanitizeObjectInPlace(item);
+      }
+    });
+    return;
   }
 
-  if (value && typeof value === "object") {
-    const sanitized = {};
-
-    Object.keys(value).forEach(function (key) {
-      sanitized[key] = sanitizeValue(value[key]);
-    });
-
-    return sanitized;
+  if (isPlainObject(value)) {
+    sanitizeObjectInPlace(value);
+    return;
   }
 
   if (typeof value === "string") {
-    return sanitizeString(value);
+    container[key] = sanitizeString(value);
   }
+}
 
-  return value;
+function sanitizeObjectInPlace(target) {
+  Object.keys(target).forEach(function (key) {
+    if (isDangerousKey(key)) {
+      delete target[key];
+      return;
+    }
+
+    sanitizeValueInPlace(target, key);
+  });
 }
 
 function sanitizeRequestData(req, res, next) {
-  if (req.body && typeof req.body === "object") {
-    req.body = sanitizeValue(req.body);
+  if (req.body && isPlainObject(req.body)) {
+    sanitizeObjectInPlace(req.body);
   }
 
   if (req.query && typeof req.query === "object") {
-    req.query = sanitizeValue(req.query);
+    sanitizeObjectInPlace(req.query);
+  }
+
+  if (req.params && typeof req.params === "object") {
+    sanitizeObjectInPlace(req.params);
   }
 
   next();

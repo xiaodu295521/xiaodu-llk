@@ -1,6 +1,5 @@
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const mongoSanitize = require("express-mongo-sanitize");
 const { env } = require("../config/env");
 const { sanitizeRequestData } = require("../utils/request-sanitizer");
 
@@ -36,9 +35,6 @@ function applySecurityMiddlewares(app) {
     crossOriginResourcePolicy: false
   }));
   app.use(createGeneralLimiter());
-  app.use(mongoSanitize({
-    replaceWith: "_"
-  }));
   app.use(sanitizeRequestData);
 }
 
