@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>管理后台 - 卡速购</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = { theme: { extend: { colors: { shop: { red: '#e1251b', orange: '#ff7a00', dark: '#1f2329', soft: '#fff6f0', line: '#f3dfd6' } } } } };
+  </script>
+  <style>
+    body {
+      font-family: "Noto Sans SC", sans-serif;
+      background: radial-gradient(circle at top left, rgba(255,122,0,.14), transparent 22%), radial-gradient(circle at top right, rgba(225,37,27,.10), transparent 26%), linear-gradient(180deg, #fff9f6 0%, #fff 40%, #fffaf8 100%);
+      color: #1f2329;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <header class="border-b border-white/70 bg-white/90 backdrop-blur-xl">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <a href="index.html" class="flex items-center gap-3">
+        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-shop-red to-shop-orange text-lg font-extrabold text-white shadow-lg">卡</div>
+        <div><p class="text-lg font-extrabold text-shop-dark">卡速购</p><p class="text-xs text-gray-500">管理员后台</p></div>
+      </a>
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-sm font-semibold text-gray-600 hover:text-shop-red">商城首页</a>
+        <a href="orders.html" class="text-sm font-semibold text-gray-600 hover:text-shop-red">我的订单</a>
+        <button id="logoutBtn" class="rounded-full bg-shop-dark px-4 py-2 text-sm font-bold text-white hover:bg-shop-red">退出登录</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <section class="rounded-[32px] bg-gradient-to-r from-shop-dark via-[#2b3037] to-shop-red p-1 shadow-lg">
+      <div class="rounded-[30px] bg-white/95 px-6 py-8 sm:px-8">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p class="text-sm font-extrabold uppercase tracking-[0.24em] text-shop-red">Admin Dashboard</p>
+            <h1 class="mt-3 text-3xl font-extrabold text-gray-900 sm:text-4xl">扫码支付人工确认后台</h1>
+            <p class="mt-3 max-w-2xl text-base leading-7 text-gray-600">管理员可重点查看“已付款待确认”的订单，并在核对到账后手动确认收款。</p>
+          </div>
+          <div class="rounded-3xl bg-shop-soft px-5 py-4"><p class="text-xs text-gray-500">当前管理员</p><p id="adminName" class="mt-2 text-lg font-extrabold text-shop-dark">--</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <div class="rounded-3xl border border-shop-line bg-white p-5 shadow-lg"><p class="text-sm text-gray-500">注册用户</p><p id="statUsers" class="mt-2 text-3xl font-extrabold text-shop-dark">0</p></div>
+      <div class="rounded-3xl border border-shop-line bg-white p-5 shadow-lg"><p class="text-sm text-gray-500">全部订单</p><p id="statOrders" class="mt-2 text-3xl font-extrabold text-shop-dark">0</p></div>
+      <div class="rounded-3xl border border-shop-line bg-white p-5 shadow-lg"><p class="text-sm text-gray-500">待支付</p><p id="statPending" class="mt-2 text-3xl font-extrabold text-red-600">0</p></div>
+      <div class="rounded-3xl border border-shop-line bg-white p-5 shadow-lg"><p class="text-sm text-gray-500">待确认订单</p><p id="statPaidPending" class="mt-2 text-3xl font-extrabold text-amber-600">0</p></div>
+      <div class="rounded-3xl border border-shop-line bg-white p-5 shadow-lg"><p class="text-sm text-gray-500">已完成</p><p id="statCompleted" class="mt-2 text-3xl font-extrabold text-emerald-600">0</p></div>
+    </section>
+
+    <section class="mt-8 grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
+      <div class="rounded-[32px] border border-shop-line bg-white p-6 shadow-lg sm:p-8">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p class="text-sm font-extrabold uppercase tracking-[0.24em] text-shop-red">Orders</p>
+            <h2 class="mt-2 text-2xl font-extrabold text-gray-900">订单管理</h2>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <button class="filter-btn rounded-full bg-shop-dark px-5 py-2.5 text-sm font-bold text-white" data-filter="all">全部</button>
+            <button class="filter-btn rounded-full border border-gray-200 px-5 py-2.5 text-sm font-bold text-gray-700" data-filter="paid_pending_confirm">待确认</button>
+            <button id="refreshAdminData" class="rounded-full border border-gray-200 px-5 py-2.5 text-sm font-bold text-gray-700 hover:border-shop-red hover:text-shop-red">刷新数据</button>
+          </div>
+        </div>
+        <div id="adminOrders" class="mt-6 space-y-4"></div>
+      </div>
+      <div class="rounded-[32px] border border-shop-line bg-white p-6 shadow-lg sm:p-8">
+        <div><p class="text-sm font-extrabold uppercase tracking-[0.24em] text-shop-red">Users</p><h2 class="mt-2 text-2xl font-extrabold text-gray-900">用户列表</h2></div>
+        <div id="adminUsers" class="mt-6 space-y-4"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="auth.js"></script>
+  <script>
+    const ORDER_STATUS = window.KasuAuth.ORDER_STATUS;
+    const logoutBtn = document.getElementById('logoutBtn');
+    const refreshAdminData = document.getElementById('refreshAdminData');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    let activeFilter = 'all';
+    let cachedOrders = [];
+
+    function formatDateTime(value) {
+      const date = new Date(value);
+      return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0') + ' ' + String(date.getHours()).padStart(2, '0') + ':' + String(date.getMinutes()).padStart(2, '0');
+    }
+
+    async function renderSummary() {
+      const usersResult = await window.KasuAuth.getAdminUsers();
+      const ordersResult = await window.KasuAuth.getAdminOrders();
+      if (!usersResult.success || !ordersResult.success) { return; }
+      cachedOrders = ordersResult.orders || [];
+      document.getElementById('statUsers').textContent = (usersResult.users || []).filter(function (user) { return user.role === 'user'; }).length;
+      document.getElementById('statOrders').textContent = cachedOrders.length;
+      document.getElementById('statPending').textContent = cachedOrders.filter(function (order) { return order.status === ORDER_STATUS.PENDING; }).length;
+      document.getElementById('statPaidPending').textContent = cachedOrders.filter(function (order) { return order.status === ORDER_STATUS.PAID_PENDING_CONFIRM; }).length;
+      document.getElementById('statCompleted').textContent = cachedOrders.filter(function (order) { return order.status === ORDER_STATUS.COMPLETED; }).length;
+    }
+
+    async function renderUsers() {
+      const result = await window.KasuAuth.getAdminUsers();
+      const adminUsers = document.getElementById('adminUsers');
+      if (!result.success) { adminUsers.innerHTML = '<div class="rounded-3xl bg-shop-soft p-6 text-sm text-gray-500">' + result.message + '</div>'; return; }
+      adminUsers.innerHTML = (result.users || []).map(function (user) { return '<div class="rounded-3xl bg-shop-soft/50 p-5 ring-1 ring-orange-100"><div class="flex items-center justify-between gap-3"><div><p class="text-lg font-extrabold text-gray-900">' + user.nickname + '</p><p class="mt-1 text-sm text-gray-500">' + user.phone + ' · ' + user.role + '</p></div><span class="rounded-full bg-white px-4 py-2 text-sm font-bold text-shop-red">' + user.orderCount + ' 单</span></div><p class="mt-3 text-xs text-gray-500">注册时间：' + formatDateTime(user.createdAt) + '</p></div>'; }).join('');
+    }
+
+    function buildConfirmButton(order) {
+      if (!order.canAdminComplete) { return '<span class="inline-flex items-center justify-center rounded-full border border-gray-200 px-5 py-2.5 text-sm font-bold text-gray-400">无需操作</span>'; }
+      return '<button class="confirm-order-btn rounded-full bg-shop-red px-5 py-2.5 text-sm font-bold text-white hover:bg-red-700" data-order-id="' + order.id + '">确认已收款</button>';
+    }
+
+    async function renderOrders() {
+      const result = await window.KasuAuth.getAdminOrders();
+      const adminOrders = document.getElementById('adminOrders');
+      if (!result.success) { adminOrders.innerHTML = '<div class="rounded-3xl bg-shop-soft p-6 text-sm text-gray-500">' + result.message + '</div>'; return; }
+      cachedOrders = result.orders || [];
+      const orders = activeFilter === 'all' ? cachedOrders : cachedOrders.filter(function (order) { return order.status === activeFilter; });
+      if (!orders.length) { adminOrders.innerHTML = '<div class="rounded-3xl bg-shop-soft p-6 text-sm text-gray-500">当前筛选条件下暂无订单。</div>'; return; }
+      adminOrders.innerHTML = orders.map(function (order) { return '<article class="rounded-[28px] border border-shop-line bg-gradient-to-br from-white to-shop-soft/40 p-6"><div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between"><div class="flex-1"><div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><p class="text-sm text-gray-500">订单号：' + order.orderNo + '</p><h3 class="mt-2 text-2xl font-extrabold text-gray-900">' + order.planName + '</h3><p class="mt-1 text-sm text-gray-500">用户：' + (order.user ? order.user.nickname : '未知用户') + ' · ' + (order.user ? order.user.phone : '--') + '</p></div><span class="rounded-full px-4 py-2 text-sm font-bold ' + order.statusClass + '">' + order.statusLabel + '</span></div><div class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><div class="rounded-2xl bg-white p-4 ring-1 ring-orange-100"><p class="text-xs text-gray-500">套餐流量</p><p class="mt-2 text-lg font-extrabold text-gray-900">' + order.flow + '</p></div><div class="rounded-2xl bg-white p-4 ring-1 ring-orange-100"><p class="text-xs text-gray-500">价格</p><p class="mt-2 text-lg font-extrabold text-gray-900">' + order.price + ' 元</p></div><div class="rounded-2xl bg-white p-4 ring-1 ring-orange-100"><p class="text-xs text-gray-500">收货人</p><p class="mt-2 text-lg font-extrabold text-gray-900">' + order.receiverName + '</p></div><div class="rounded-2xl bg-white p-4 ring-1 ring-orange-100"><p class="text-xs text-gray-500">下单时间</p><p class="mt-2 text-lg font-extrabold text-gray-900">' + formatDateTime(order.createdAt) + '</p></div></div><div class="mt-5 rounded-2xl bg-white p-4 ring-1 ring-orange-100"><p class="text-xs text-gray-500">订单说明</p><p class="mt-2 text-sm font-semibold text-gray-800">当前版本使用微信收款码人工确认流程。</p><p class="mt-2 text-xs text-gray-500">联系电话：' + order.receiverPhone + (order.remark ? ' · 备注：' + order.remark : '') + '</p></div></div><div class="flex shrink-0 flex-col gap-3">' + buildConfirmButton(order) + '</div></div></article>'; }).join('');
+      document.querySelectorAll('.confirm-order-btn').forEach(function (button) { button.addEventListener('click', async function () { const orderId = button.getAttribute('data-order-id'); button.disabled = true; button.textContent = '确认中...'; const updateResult = await window.KasuAuth.updateAdminOrderStatus(orderId, ORDER_STATUS.COMPLETED); if (!updateResult.success) { alert(updateResult.message); } await renderDashboard(); }); });
+    }
+
+    async function renderDashboard() { await renderSummary(); await renderUsers(); await renderOrders(); }
+
+    async function initPage() {
+      const currentUser = await window.KasuAuth.getCurrentUserRecord();
+      if (!currentUser) { window.location.href = 'login.html'; return; }
+      if (!window.KasuAuth.isAdmin()) { window.location.href = 'index.html'; return; }
+      document.getElementById('adminName').textContent = currentUser.nickname + ' · ' + currentUser.phone;
+      logoutBtn.addEventListener('click', async function () { await window.KasuAuth.logoutUser(); window.location.href = 'index.html'; });
+      refreshAdminData.addEventListener('click', renderDashboard);
+      filterButtons.forEach(function (button) { button.addEventListener('click', function () { activeFilter = button.getAttribute('data-filter'); filterButtons.forEach(function (item) { item.className = 'filter-btn rounded-full border border-gray-200 px-5 py-2.5 text-sm font-bold text-gray-700'; }); button.className = 'filter-btn rounded-full bg-shop-dark px-5 py-2.5 text-sm font-bold text-white'; renderOrders(); }); });
+      await renderDashboard();
+    }
+
+    initPage();
+  </script>
+</body>
+</html>

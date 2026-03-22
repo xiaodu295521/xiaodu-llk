@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>登录 - 卡速购</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            shop: {
+              red: "#e1251b",
+              orange: "#ff7a00",
+              gold: "#ffb648",
+              dark: "#1f2329",
+              soft: "#fff6f0",
+              line: "#f3dfd6"
+            }
+          },
+          boxShadow: {
+            auth: "0 30px 80px rgba(225, 37, 27, 0.14)",
+            card: "0 18px 45px rgba(18, 24, 40, 0.08)"
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: "Noto Sans SC", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255, 122, 0, 0.16), transparent 24%),
+        radial-gradient(circle at right top, rgba(225, 37, 27, 0.12), transparent 30%),
+        linear-gradient(180deg, #fff8f4 0%, #ffffff 45%, #fffaf8 100%);
+      color: #1f2329;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <header class="border-b border-white/70 bg-white/90 backdrop-blur-xl">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <a href="index.html" class="flex items-center gap-3">
+        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-shop-red to-shop-orange text-lg font-extrabold text-white shadow-card">卡</div>
+        <div>
+          <p class="text-lg font-extrabold text-shop-dark">卡速购</p>
+          <p class="text-xs text-gray-500">手机流量卡优选商城</p>
+        </div>
+      </a>
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-sm font-semibold text-gray-600 hover:text-shop-red">返回首页</a>
+        <a href="register.html" class="rounded-full bg-shop-red px-4 py-2 text-sm font-bold text-white hover:bg-red-700">去注册</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="mx-auto grid min-h-[calc(100vh-81px)] max-w-7xl items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
+    <section>
+      <span class="inline-flex items-center rounded-full border border-red-100 bg-red-50 px-4 py-2 text-sm font-semibold text-shop-red">
+        账号登录
+      </span>
+      <h1 class="mt-6 text-4xl font-extrabold leading-tight text-gray-900 sm:text-5xl">
+        登录卡速购
+        <span class="block bg-gradient-to-r from-shop-red via-shop-orange to-shop-gold bg-clip-text text-transparent">
+          查看套餐，开始下单
+        </span>
+      </h1>
+      <p class="mt-6 max-w-xl text-base leading-8 text-gray-600">
+        这是纯前端模拟登录页面，账号信息保存在当前浏览器中。你可以先注册，再返回登录。
+      </p>
+
+      <div class="mt-10 grid gap-4 sm:grid-cols-3">
+        <div class="rounded-2xl border border-shop-line bg-white p-5 shadow-card">
+          <p class="text-sm text-gray-500">纯前端</p>
+          <p class="mt-2 text-xl font-extrabold text-shop-dark">localStorage</p>
+        </div>
+        <div class="rounded-2xl border border-shop-line bg-white p-5 shadow-card">
+          <p class="text-sm text-gray-500">登录状态</p>
+          <p class="mt-2 text-xl font-extrabold text-shop-dark">浏览器保存</p>
+        </div>
+        <div class="rounded-2xl border border-shop-line bg-white p-5 shadow-card">
+          <p class="text-sm text-gray-500">适用场景</p>
+          <p class="mt-2 text-xl font-extrabold text-shop-dark">演示站点</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="rounded-[32px] border border-shop-line bg-white p-6 shadow-auth sm:p-8">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <p class="text-sm font-bold uppercase tracking-[0.24em] text-shop-red">Login</p>
+          <h2 class="mt-3 text-3xl font-extrabold text-gray-900">欢迎回来</h2>
+        </div>
+        <div class="rounded-2xl bg-shop-soft px-4 py-3 text-right">
+          <p class="text-xs text-gray-500">快捷入口</p>
+          <p class="mt-1 text-sm font-bold text-shop-dark">登录后返回商城</p>
+        </div>
+      </div>
+
+      <form id="loginForm" class="mt-8 space-y-5">
+        <div>
+          <label for="phone" class="mb-2 block text-sm font-semibold text-gray-700">手机号</label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            inputmode="numeric"
+            maxlength="11"
+            placeholder="请输入 11 位手机号"
+            class="h-12 w-full rounded-2xl border border-gray-200 px-4 text-base text-gray-900 outline-none transition focus:border-shop-red focus:ring-4 focus:ring-red-50"
+          />
+        </div>
+
+        <div>
+          <label for="password" class="mb-2 block text-sm font-semibold text-gray-700">密码</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="请输入密码"
+            class="h-12 w-full rounded-2xl border border-gray-200 px-4 text-base text-gray-900 outline-none transition focus:border-shop-red focus:ring-4 focus:ring-red-50"
+          />
+        </div>
+
+        <div id="loginMessage" class="hidden rounded-2xl px-4 py-3 text-sm font-semibold"></div>
+
+        <button type="submit" class="w-full rounded-2xl bg-shop-red px-4 py-3.5 text-base font-bold text-white shadow-lg transition hover:bg-red-700">
+          立即登录
+        </button>
+      </form>
+
+      <div class="mt-6 flex flex-col gap-3 rounded-3xl bg-shop-soft p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-500">还没有账号？</p>
+          <p class="mt-1 text-base font-bold text-shop-dark">先去注册一个新账号</p>
+        </div>
+        <a href="register.html" class="inline-flex items-center justify-center rounded-full bg-shop-dark px-5 py-2.5 text-sm font-bold text-white hover:bg-shop-red">
+          前往注册
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script src="auth.js"></script>
+  <script>
+    const loginForm = document.getElementById("loginForm");
+    const loginMessage = document.getElementById("loginMessage");
+
+    if (window.KasuAuth.getCurrentUser()) {
+      window.KasuAuth.getCurrentUserRecord().then(function (user) {
+        if (user) {
+          window.location.href = user.role === "admin" ? "admin.html" : "profile.html";
+        }
+      });
+    }
+
+    function showMessage(message, success) {
+      loginMessage.textContent = message;
+      loginMessage.classList.remove("hidden", "bg-red-50", "text-red-600", "bg-emerald-50", "text-emerald-600");
+      loginMessage.classList.add(success ? "bg-emerald-50" : "bg-red-50");
+      loginMessage.classList.add(success ? "text-emerald-600" : "text-red-600");
+    }
+
+    loginForm.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const result = await window.KasuAuth.loginUser({
+        phone: loginForm.phone.value,
+        password: loginForm.password.value
+      });
+
+      showMessage(result.message, result.success);
+
+      if (result.success) {
+        setTimeout(function () {
+          window.location.href = result.user.role === "admin" ? "admin.html" : "profile.html";
+        }, 700);
+      }
+    });
+  </script>
+</body>
+</html>

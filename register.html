@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>注册 - 卡速购</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            shop: {
+              red: "#e1251b",
+              orange: "#ff7a00",
+              gold: "#ffb648",
+              dark: "#1f2329",
+              soft: "#fff6f0",
+              line: "#f3dfd6"
+            }
+          },
+          boxShadow: {
+            auth: "0 30px 80px rgba(225, 37, 27, 0.14)",
+            card: "0 18px 45px rgba(18, 24, 40, 0.08)"
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: "Noto Sans SC", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255, 122, 0, 0.16), transparent 24%),
+        radial-gradient(circle at right top, rgba(225, 37, 27, 0.12), transparent 30%),
+        linear-gradient(180deg, #fff8f4 0%, #ffffff 45%, #fffaf8 100%);
+      color: #1f2329;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <header class="border-b border-white/70 bg-white/90 backdrop-blur-xl">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <a href="index.html" class="flex items-center gap-3">
+        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-shop-red to-shop-orange text-lg font-extrabold text-white shadow-card">卡</div>
+        <div>
+          <p class="text-lg font-extrabold text-shop-dark">卡速购</p>
+          <p class="text-xs text-gray-500">手机流量卡优选商城</p>
+        </div>
+      </a>
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-sm font-semibold text-gray-600 hover:text-shop-red">返回首页</a>
+        <a href="login.html" class="rounded-full bg-shop-dark px-4 py-2 text-sm font-bold text-white hover:bg-shop-red">去登录</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="mx-auto grid min-h-[calc(100vh-81px)] max-w-7xl items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_0.95fr] lg:px-8">
+    <section class="order-2 rounded-[32px] border border-shop-line bg-white p-6 shadow-auth sm:p-8 lg:order-1">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <p class="text-sm font-bold uppercase tracking-[0.24em] text-shop-red">Register</p>
+          <h1 class="mt-3 text-3xl font-extrabold text-gray-900">创建新账号</h1>
+        </div>
+        <div class="rounded-2xl bg-shop-soft px-4 py-3 text-right">
+          <p class="text-xs text-gray-500">说明</p>
+          <p class="mt-1 text-sm font-bold text-shop-dark">纯前端模拟注册</p>
+        </div>
+      </div>
+
+      <form id="registerForm" class="mt-8 space-y-5">
+        <div>
+          <label for="nickname" class="mb-2 block text-sm font-semibold text-gray-700">昵称</label>
+          <input
+            id="nickname"
+            name="nickname"
+            type="text"
+            placeholder="请输入昵称"
+            class="h-12 w-full rounded-2xl border border-gray-200 px-4 text-base text-gray-900 outline-none transition focus:border-shop-red focus:ring-4 focus:ring-red-50"
+          />
+        </div>
+
+        <div>
+          <label for="phone" class="mb-2 block text-sm font-semibold text-gray-700">手机号</label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            inputmode="numeric"
+            maxlength="11"
+            placeholder="请输入 11 位手机号"
+            class="h-12 w-full rounded-2xl border border-gray-200 px-4 text-base text-gray-900 outline-none transition focus:border-shop-red focus:ring-4 focus:ring-red-50"
+          />
+        </div>
+
+        <div>
+          <label for="password" class="mb-2 block text-sm font-semibold text-gray-700">密码</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="至少 6 位密码"
+            class="h-12 w-full rounded-2xl border border-gray-200 px-4 text-base text-gray-900 outline-none transition focus:border-shop-red focus:ring-4 focus:ring-red-50"
+          />
+        </div>
+
+        <div>
+          <label for="confirmPassword" class="mb-2 block text-sm font-semibold text-gray-700">确认密码</label>
+          <input
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            placeholder="请再次输入密码"
+            class="h-12 w-full rounded-2xl border border-gray-200 px-4 text-base text-gray-900 outline-none transition focus:border-shop-red focus:ring-4 focus:ring-red-50"
+          />
+        </div>
+
+        <div id="registerMessage" class="hidden rounded-2xl px-4 py-3 text-sm font-semibold"></div>
+
+        <button type="submit" class="w-full rounded-2xl bg-shop-red px-4 py-3.5 text-base font-bold text-white shadow-lg transition hover:bg-red-700">
+          立即注册
+        </button>
+      </form>
+    </section>
+
+    <section class="order-1 lg:order-2">
+      <span class="inline-flex items-center rounded-full border border-red-100 bg-red-50 px-4 py-2 text-sm font-semibold text-shop-red">
+        新用户注册
+      </span>
+      <h2 class="mt-6 text-4xl font-extrabold leading-tight text-gray-900 sm:text-5xl">
+        注册后即可体验
+        <span class="block bg-gradient-to-r from-shop-red via-shop-orange to-shop-gold bg-clip-text text-transparent">
+          流量卡商城模拟账户
+        </span>
+      </h2>
+      <p class="mt-6 max-w-xl text-base leading-8 text-gray-600">
+        注册完成后会自动登录，并回到首页。整个流程完全基于前端浏览器存储实现，适合演示和练习项目使用。
+      </p>
+
+      <div class="mt-10 grid gap-4 sm:grid-cols-3">
+        <div class="rounded-2xl border border-shop-line bg-white p-5 shadow-card">
+          <p class="text-sm text-gray-500">注册方式</p>
+          <p class="mt-2 text-xl font-extrabold text-shop-dark">手机号</p>
+        </div>
+        <div class="rounded-2xl border border-shop-line bg-white p-5 shadow-card">
+          <p class="text-sm text-gray-500">账号保存</p>
+          <p class="mt-2 text-xl font-extrabold text-shop-dark">本地浏览器</p>
+        </div>
+        <div class="rounded-2xl border border-shop-line bg-white p-5 shadow-card">
+          <p class="text-sm text-gray-500">注册完成</p>
+          <p class="mt-2 text-xl font-extrabold text-shop-dark">自动登录</p>
+        </div>
+      </div>
+
+      <div class="mt-8 rounded-3xl bg-shop-dark p-6 text-white">
+        <p class="text-sm text-white/70">已有账号？</p>
+        <p class="mt-2 text-xl font-bold">可以直接前往登录页面</p>
+        <a href="login.html" class="mt-5 inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 text-sm font-bold text-shop-dark hover:bg-orange-100">
+          去登录
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script src="auth.js"></script>
+  <script>
+    const registerForm = document.getElementById("registerForm");
+    const registerMessage = document.getElementById("registerMessage");
+
+    if (window.KasuAuth.getCurrentUser()) {
+      window.KasuAuth.getCurrentUserRecord().then(function (user) {
+        if (user) {
+          window.location.href = user.role === "admin" ? "admin.html" : "profile.html";
+        }
+      });
+    }
+
+    function showMessage(message, success) {
+      registerMessage.textContent = message;
+      registerMessage.classList.remove("hidden", "bg-red-50", "text-red-600", "bg-emerald-50", "text-emerald-600");
+      registerMessage.classList.add(success ? "bg-emerald-50" : "bg-red-50");
+      registerMessage.classList.add(success ? "text-emerald-600" : "text-red-600");
+    }
+
+    registerForm.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      if (registerForm.password.value !== registerForm.confirmPassword.value) {
+        showMessage("两次输入的密码不一致", false);
+        return;
+      }
+
+      const result = await window.KasuAuth.registerUser({
+        nickname: registerForm.nickname.value,
+        phone: registerForm.phone.value,
+        password: registerForm.password.value
+      });
+
+      showMessage(result.message, result.success);
+
+      if (result.success) {
+        setTimeout(function () {
+          window.location.href = result.user.role === "admin" ? "admin.html" : "profile.html";
+        }, 700);
+      }
+    });
+  </script>
+</body>
+</html>

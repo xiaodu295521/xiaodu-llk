@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>卡速购 - 手机流量卡售卖网站</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            shop: {
+              red: "#e1251b",
+              orange: "#ff7a00",
+              gold: "#ffb648",
+              dark: "#1f2329",
+              soft: "#fff6f0",
+              line: "#f3dfd6",
+              wechat: "#07c160"
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Noto Sans SC", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255, 122, 0, 0.14), transparent 24%),
+        radial-gradient(circle at top right, rgba(225, 37, 27, 0.10), transparent 28%),
+        linear-gradient(180deg, #fff9f6 0%, #fff 42%, #fffaf8 100%);
+      color: #1f2329;
+    }
+    .plan-card { position: relative; overflow: hidden; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+    .plan-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.72) 48%, transparent 100%); transform: translateX(-140%); transition: transform .7s ease; pointer-events: none; }
+    .plan-card:hover { transform: translateY(-8px); box-shadow: 0 24px 60px rgba(225, 37, 27, 0.14); }
+    .plan-card:hover::before { transform: translateX(140%); }
+    .nav-link { position: relative; }
+    .nav-link::after { content: ""; position: absolute; left: 0; bottom: -8px; width: 100%; height: 2px; background: linear-gradient(90deg, #e1251b, #ff7a00); transform: scaleX(0); transform-origin: left; transition: transform .22s ease; }
+    .nav-link:hover::after { transform: scaleX(1); }
+    .loading-shimmer { background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.75) 50%, rgba(255,255,255,0) 100%); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; }
+    @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="bg-shop-dark text-white">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 text-xs sm:px-6 lg:px-8">
+      <p class="truncate">欢迎来到卡速购，精选高性价比手机流量卡</p>
+      <p class="hidden text-white/70 sm:block">微信收款码支付 · 人工确认到账 · 订单实时可查</p>
+    </div>
+  </div>
+
+  <header class="sticky top-0 z-50 border-b border-white/70 bg-white/90 backdrop-blur-xl">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <a href="#home" class="flex items-center gap-3">
+        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-shop-red to-shop-orange text-lg font-extrabold text-white shadow-lg">卡</div>
+        <div>
+          <p class="text-lg font-extrabold tracking-tight text-shop-dark">卡速购</p>
+          <p class="text-xs text-gray-500">手机流量卡优选商城</p>
+        </div>
+      </a>
+      <button id="menuBtn" class="rounded-xl border border-gray-200 p-2 md:hidden" aria-label="打开菜单">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h16" /></svg>
+      </button>
+      <div class="hidden items-center gap-8 md:flex">
+        <a href="#home" class="nav-link text-sm font-semibold text-gray-700 hover:text-shop-red">首页</a>
+        <a href="#plans" class="nav-link text-sm font-semibold text-gray-700 hover:text-shop-red">套餐</a>
+        <a href="#contact" class="nav-link text-sm font-semibold text-gray-700 hover:text-shop-red">联系我们</a>
+        <div id="authGuestDesktop" class="flex items-center gap-3">
+          <a href="login.html" class="text-sm font-semibold text-gray-700 hover:text-shop-red">登录</a>
+          <a href="register.html" class="rounded-full border border-red-100 bg-red-50 px-4 py-2 text-sm font-bold text-shop-red hover:bg-red-100">注册</a>
+        </div>
+        <div id="authUserDesktop" class="hidden items-center gap-3">
+          <a id="adminLinkDesktop" href="admin.html" class="hidden text-sm font-semibold text-gray-700 hover:text-shop-red">管理后台</a>
+          <a href="profile.html" class="text-sm font-semibold text-gray-700 hover:text-shop-red">个人中心</a>
+          <a href="orders.html" class="text-sm font-semibold text-gray-700 hover:text-shop-red">我的订单</a>
+          <span class="rounded-full bg-orange-50 px-4 py-2 text-sm font-semibold text-shop-dark">欢迎，<span id="currentUserNameDesktop"></span></span>
+          <button id="logoutBtnDesktop" class="rounded-full border border-gray-200 px-4 py-2 text-sm font-bold text-gray-700 hover:border-shop-red hover:text-shop-red">退出登录</button>
+        </div>
+        <a href="#plans" class="rounded-full bg-shop-red px-5 py-2.5 text-sm font-bold text-white hover:bg-red-700">立即选购</a>
+      </div>
+    </nav>
+    <div id="mobileMenu" class="hidden border-t border-gray-100 bg-white md:hidden">
+      <div class="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-4 sm:px-6">
+        <a href="#home" class="rounded-xl px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">首页</a>
+        <a href="#plans" class="rounded-xl px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">套餐</a>
+        <a href="#contact" class="rounded-xl px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">联系我们</a>
+        <div id="authGuestMobile" class="grid grid-cols-2 gap-3 pt-2">
+          <a href="login.html" class="rounded-xl border border-gray-200 px-3 py-2 text-center text-sm font-semibold text-gray-700 hover:bg-gray-50">登录</a>
+          <a href="register.html" class="rounded-xl bg-shop-red px-3 py-2 text-center text-sm font-semibold text-white hover:bg-red-700">注册</a>
+        </div>
+        <div id="authUserMobile" class="hidden rounded-2xl bg-shop-soft p-4">
+          <p class="text-xs text-gray-500">当前账号</p>
+          <p id="currentUserNameMobile" class="mt-1 text-sm font-bold text-shop-dark"></p>
+          <a id="adminLinkMobile" href="admin.html" class="mt-3 hidden rounded-xl border border-orange-200 bg-white px-3 py-2 text-center text-sm font-semibold text-shop-dark hover:border-shop-red hover:text-shop-red">管理后台</a>
+          <div class="mt-3 grid grid-cols-2 gap-3">
+            <a href="profile.html" class="rounded-xl border border-orange-200 bg-white px-3 py-2 text-center text-sm font-semibold text-shop-dark hover:border-shop-red hover:text-shop-red">个人中心</a>
+            <a href="orders.html" class="rounded-xl border border-orange-200 bg-white px-3 py-2 text-center text-sm font-semibold text-shop-dark hover:border-shop-red hover:text-shop-red">我的订单</a>
+          </div>
+          <button id="logoutBtnMobile" class="mt-3 w-full rounded-xl bg-shop-dark px-3 py-2 text-sm font-bold text-white hover:bg-shop-red">退出登录</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="home" class="mx-auto max-w-7xl px-4 pb-12 pt-10 sm:px-6 lg:px-8 lg:pb-16 lg:pt-16">
+      <div class="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+        <div>
+          <div class="inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-4 py-2 text-sm font-semibold text-shop-red"><span class="h-2 w-2 rounded-full bg-shop-red"></span>下单后出示微信收款码 · 用户点“我已付款” · 管理员人工确认</div>
+          <h1 class="mt-6 text-4xl font-extrabold leading-tight text-gray-900 sm:text-5xl lg:text-6xl">高性价比流量卡<span class="block bg-gradient-to-r from-shop-red via-shop-orange to-shop-gold bg-clip-text text-transparent">扫码支付更直接，确认流程更清晰</span></h1>
+          <p class="mt-6 max-w-2xl text-base leading-8 text-gray-600 sm:text-lg">用户点击立即购买后，系统会先创建订单，再弹出微信收款码。用户扫码付款并点击“我已付款”后，订单会进入“已付款待确认”，等待管理员手动确认到账。</p>
+          <div class="mt-8 flex flex-col gap-4 sm:flex-row">
+            <a href="#plans" class="inline-flex items-center justify-center rounded-full bg-shop-red px-7 py-3.5 text-sm font-bold text-white hover:bg-red-700">查看热门套餐</a>
+            <a href="orders.html" class="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-7 py-3.5 text-sm font-bold text-gray-800 hover:border-shop-red hover:text-shop-red">查看我的订单</a>
+          </div>
+        </div>
+        <div class="rounded-[32px] bg-gradient-to-br from-shop-dark via-[#2b3037] to-shop-red p-1 shadow-[0_28px_80px_rgba(225,37,27,.18)]">
+          <div class="rounded-[30px] bg-white/95 p-6 sm:p-8">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <span id="featuredTag" class="inline-flex rounded-full bg-red-50 px-3 py-1 text-xs font-extrabold text-shop-red">正在加载</span>
+                <h2 id="featuredName" class="mt-4 text-3xl font-extrabold text-gray-900">正在加载推荐套餐...</h2>
+                <p id="featuredDescription" class="mt-3 text-sm leading-7 text-gray-500">页面会在加载完成后自动显示推荐套餐信息。</p>
+              </div>
+              <div class="rounded-2xl bg-shop-soft px-4 py-3 text-right"><p class="text-xs text-gray-500">套餐月租</p><p class="mt-1 text-3xl font-extrabold text-shop-red"><span id="featuredPrice">--</span>元</p></div>
+            </div>
+            <div class="mt-8 grid gap-4 sm:grid-cols-3">
+              <div class="rounded-2xl bg-shop-soft p-4"><p class="text-xs text-gray-500">套餐流量</p><p id="featuredFlow" class="mt-2 text-xl font-extrabold text-gray-900">--</p></div>
+              <div class="rounded-2xl bg-shop-soft p-4"><p class="text-xs text-gray-500">有效期</p><p id="featuredValidDays" class="mt-2 text-xl font-extrabold text-gray-900">--</p></div>
+              <div class="rounded-2xl bg-shop-soft p-4"><p class="text-xs text-gray-500">库存状态</p><p id="featuredStock" class="mt-2 text-xl font-extrabold text-gray-900">--</p></div>
+            </div>
+            <button id="featuredBuyBtn" class="mt-8 w-full rounded-2xl bg-shop-red px-5 py-3 text-base font-bold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60" disabled>立即购买</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="plans" class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="text-sm font-extrabold uppercase tracking-[0.24em] text-shop-red">热门套餐</p>
+          <h2 class="mt-3 text-3xl font-extrabold text-gray-900 sm:text-4xl">后端实时套餐列表</h2>
+          <p class="mt-3 max-w-2xl text-base leading-7 text-gray-600">商品卡片来自 `/products`。点击“立即购买”时，会直接创建订单并进入微信扫码支付弹窗。</p>
+        </div>
+        <button id="retryProductsBtn" class="inline-flex items-center justify-center rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 shadow-sm hover:border-shop-red hover:text-shop-red">刷新套餐</button>
+      </div>
+      <div id="productsLoading" class="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div class="rounded-[28px] border border-shop-line bg-white p-6 shadow-lg"><div class="h-6 w-24 rounded-full bg-shop-soft loading-shimmer"></div><div class="mt-5 h-9 w-36 rounded-2xl bg-gray-100 loading-shimmer"></div><div class="mt-3 h-4 w-4/5 rounded-full bg-gray-100 loading-shimmer"></div><div class="mt-6 h-28 rounded-3xl bg-shop-soft loading-shimmer"></div><div class="mt-6 h-12 rounded-2xl bg-gray-100 loading-shimmer"></div></div>
+        <div class="rounded-[28px] border border-shop-line bg-white p-6 shadow-lg"><div class="h-6 w-24 rounded-full bg-shop-soft loading-shimmer"></div><div class="mt-5 h-9 w-36 rounded-2xl bg-gray-100 loading-shimmer"></div><div class="mt-3 h-4 w-4/5 rounded-full bg-gray-100 loading-shimmer"></div><div class="mt-6 h-28 rounded-3xl bg-shop-soft loading-shimmer"></div><div class="mt-6 h-12 rounded-2xl bg-gray-100 loading-shimmer"></div></div>
+        <div class="rounded-[28px] border border-shop-line bg-white p-6 shadow-lg md:col-span-2 xl:col-span-1"><div class="h-6 w-24 rounded-full bg-shop-soft loading-shimmer"></div><div class="mt-5 h-9 w-36 rounded-2xl bg-gray-100 loading-shimmer"></div><div class="mt-3 h-4 w-4/5 rounded-full bg-gray-100 loading-shimmer"></div><div class="mt-6 h-28 rounded-3xl bg-shop-soft loading-shimmer"></div><div class="mt-6 h-12 rounded-2xl bg-gray-100 loading-shimmer"></div></div>
+      </div>
+      <div id="productsError" class="mt-10 hidden rounded-[28px] border border-red-100 bg-red-50 p-8 text-center shadow-lg"><p class="text-lg font-bold text-shop-red">套餐加载失败</p><p id="productsErrorText" class="mt-3 text-sm leading-7 text-red-600">请检查后端服务是否已经启动。</p></div>
+      <div id="productList" class="mt-10 hidden grid gap-6 md:grid-cols-2 xl:grid-cols-3"></div>
+    </section>
+    <section id="contact" class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24">
+      <div class="overflow-hidden rounded-[32px] bg-shop-dark shadow-lg">
+        <div class="grid gap-8 px-6 py-10 sm:px-10 lg:grid-cols-[1fr_1.1fr] lg:px-12 lg:py-12">
+          <div>
+            <p class="text-sm font-extrabold uppercase tracking-[0.24em] text-orange-400">联系我们</p>
+            <h2 class="mt-4 text-3xl font-extrabold text-white sm:text-4xl">人工确认版扫码支付</h2>
+            <p class="mt-4 max-w-xl text-base leading-8 text-white/70">当前支付流程不接第三方在线支付接口，用户通过微信扫码付款后手动提交，管理员在后台人工确认收款。</p>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-3">
+            <div class="rounded-3xl bg-white/10 p-5 ring-1 ring-white/10"><p class="text-sm text-white/60">客服热线</p><p class="mt-3 text-xl font-bold text-white">400-888-2026</p></div>
+            <div class="rounded-3xl bg-white/10 p-5 ring-1 ring-white/10"><p class="text-sm text-white/60">商务邮箱</p><p class="mt-3 text-xl font-bold text-white">service@kasu.com</p></div>
+            <div class="rounded-3xl bg-white/10 p-5 ring-1 ring-white/10"><p class="text-sm text-white/60">在线时间</p><p class="mt-3 text-xl font-bold text-white">09:00 - 21:00</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="paymentModal" class="fixed inset-0 z-[60] hidden">
+    <div id="paymentModalBackdrop" class="absolute inset-0 bg-black/45 backdrop-blur-sm"></div>
+    <div class="relative flex min-h-full items-center justify-center p-4">
+      <div class="w-full max-w-4xl overflow-hidden rounded-[32px] bg-white shadow-[0_30px_80px_rgba(18,24,40,.24)]">
+        <div class="flex items-center justify-between border-b border-gray-100 px-6 py-5 sm:px-8">
+          <div>
+            <p class="text-sm font-extrabold uppercase tracking-[0.24em] text-shop-red">WeChat Pay</p>
+            <h3 class="mt-2 text-2xl font-extrabold text-gray-900">微信扫码支付</h3>
+          </div>
+          <button id="closePaymentModal" class="rounded-full border border-gray-200 p-2 text-gray-500 hover:border-shop-red hover:text-shop-red" aria-label="关闭弹窗">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <div class="grid gap-0 lg:grid-cols-[0.95fr_1.05fr]">
+          <aside class="bg-gradient-to-br from-shop-dark via-[#2a2f36] to-shop-dark px-6 py-6 text-white sm:px-8">
+            <div class="rounded-3xl bg-white/10 p-5 ring-1 ring-white/10">
+              <p class="text-sm text-white/70">当前订单</p>
+              <h4 id="paymentPlanName" class="mt-3 text-2xl font-extrabold">--</h4>
+              <div class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                <div class="rounded-2xl bg-white/10 p-4"><p class="text-xs text-white/60">订单金额</p><p class="mt-2 text-xl font-extrabold"><span id="paymentAmount">0</span> 元</p></div>
+                <div class="rounded-2xl bg-white/10 p-4"><p class="text-xs text-white/60">订单状态</p><p id="paymentStatus" class="mt-2 text-xl font-extrabold">待支付</p></div>
+              </div>
+            </div>
+            <div class="mt-5 rounded-3xl bg-white/10 p-5 ring-1 ring-white/10">
+              <p class="text-sm text-white/70">支付说明</p>
+              <ul class="mt-3 space-y-2 text-sm leading-7 text-white/85">
+                <li>1. 请使用微信扫描右侧收款码完成付款。</li>
+                <li>2. 付款后点击“我已付款”，订单会进入待人工确认。</li>
+                <li>3. 管理员确认到账后，订单会变为“已完成”。</li>
+              </ul>
+            </div>
+          </aside>
+          <section class="px-6 py-6 sm:px-8">
+            <div id="paymentLoginRequired" class="hidden rounded-3xl bg-shop-soft p-6">
+              <p class="text-sm font-bold uppercase tracking-[0.2em] text-shop-red">需要登录</p>
+              <h4 class="mt-3 text-2xl font-extrabold text-gray-900">请先登录后再下单</h4>
+              <p class="mt-3 text-sm leading-7 text-gray-600">订单接口需要登录态。登录成功后，再点击“立即购买”即可生成订单并展示微信收款码。</p>
+              <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+                <a href="login.html" class="inline-flex items-center justify-center rounded-full bg-shop-red px-6 py-3 text-sm font-bold text-white hover:bg-red-700">去登录</a>
+                <a href="register.html" class="inline-flex items-center justify-center rounded-full border border-gray-300 px-6 py-3 text-sm font-bold text-gray-700 hover:border-shop-red hover:text-shop-red">去注册</a>
+              </div>
+            </div>
+            <div id="paymentContent" class="hidden">
+              <div class="rounded-[28px] border border-green-100 bg-green-50 p-6 text-center">
+                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-shop-wechat text-white">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 13h.01M12 13h.01M16 13h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4-.812L3 20l1.188-3.168C3.432 15.624 3 14.35 3 13c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                </div>
+                <p class="mt-4 text-lg font-extrabold text-gray-900">请使用微信扫描下方收款码</p>
+                <p class="mt-2 text-sm text-gray-600">付款金额：<span id="paymentAmountText" class="font-bold text-shop-red">0 元</span></p>
+              </div>
+              <div class="mt-6 flex justify-center"><div class="rounded-[32px] border border-shop-line bg-white p-5 shadow-lg"><img src="assets/wechat-pay-qr.png" alt="微信收款二维码" class="h-64 w-64 rounded-2xl object-cover" /></div></div>
+              <div id="paymentMessage" class="mt-6 hidden rounded-2xl px-4 py-3 text-sm font-semibold"></div>
+              <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+                <button id="confirmPaidBtn" class="flex-1 rounded-2xl bg-shop-wechat px-4 py-3.5 text-base font-bold text-white hover:bg-green-600 disabled:cursor-not-allowed disabled:opacity-60">我已付款</button>
+                <a href="orders.html" class="inline-flex items-center justify-center rounded-2xl border border-gray-300 px-4 py-3.5 text-base font-bold text-gray-700 hover:border-shop-red hover:text-shop-red">查看我的订单</a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script>
+    const PRODUCT_API_URL = "/products?page=1&limit=12";
+    const productDescriptions = [
+      "适合刷剧、短视频、导航和高频上网用户，综合性价比很高。",
+      "预算友好，适合轻度上网、社交聊天和日常通勤使用。",
+      "适合学生、上班族和日常办公，资费透明，使用省心。",
+      "大流量优先，适合热点共享、移动办公和娱乐需求。",
+      "对月租敏感的用户可以优先选择，入门成本更低。",
+      "适合重度联网、多设备共享和高频使用场景。"
+    ];
+    const appState = { products: [], featuredProduct: null, currentOrder: null, creatingProductId: "", confirmingPayment: false };
+    const menuBtn = document.getElementById("menuBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+    const authGuestDesktop = document.getElementById("authGuestDesktop");
+    const authUserDesktop = document.getElementById("authUserDesktop");
+    const authGuestMobile = document.getElementById("authGuestMobile");
+    const authUserMobile = document.getElementById("authUserMobile");
+    const currentUserNameDesktop = document.getElementById("currentUserNameDesktop");
+    const currentUserNameMobile = document.getElementById("currentUserNameMobile");
+    const logoutBtnDesktop = document.getElementById("logoutBtnDesktop");
+    const logoutBtnMobile = document.getElementById("logoutBtnMobile");
+    const adminLinkDesktop = document.getElementById("adminLinkDesktop");
+    const adminLinkMobile = document.getElementById("adminLinkMobile");
+    const featuredTag = document.getElementById("featuredTag");
+    const featuredName = document.getElementById("featuredName");
+    const featuredDescription = document.getElementById("featuredDescription");
+    const featuredPrice = document.getElementById("featuredPrice");
+    const featuredFlow = document.getElementById("featuredFlow");
+    const featuredValidDays = document.getElementById("featuredValidDays");
+    const featuredStock = document.getElementById("featuredStock");
+    const featuredBuyBtn = document.getElementById("featuredBuyBtn");
+    const retryProductsBtn = document.getElementById("retryProductsBtn");
+    const productsLoading = document.getElementById("productsLoading");
+    const productsError = document.getElementById("productsError");
+    const productsErrorText = document.getElementById("productsErrorText");
+    const productList = document.getElementById("productList");
+    const paymentModal = document.getElementById("paymentModal");
+    const paymentModalBackdrop = document.getElementById("paymentModalBackdrop");
+    const closePaymentModal = document.getElementById("closePaymentModal");
+    const paymentLoginRequired = document.getElementById("paymentLoginRequired");
+    const paymentContent = document.getElementById("paymentContent");
+    const paymentPlanName = document.getElementById("paymentPlanName");
+    const paymentAmount = document.getElementById("paymentAmount");
+    const paymentAmountText = document.getElementById("paymentAmountText");
+    const paymentStatus = document.getElementById("paymentStatus");
+    const paymentMessage = document.getElementById("paymentMessage");
+    const confirmPaidBtn = document.getElementById("confirmPaidBtn");
+    function escapeHtml(value) { return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&#39;"); }
+    function formatPrice(value) { const number = Number(value); return Number.isFinite(number) ? number : "--"; }
+    function formatFlow(flowGB) { const number = Number(flowGB); return Number.isFinite(number) ? number + "GB" : "--"; }
+    function formatValidDays(validDays) { const number = Number(validDays); return Number.isFinite(number) ? number + "天" : "--"; }
+    function formatStock(stock) { if (stock === null || stock === undefined || stock === "") return "库存充足"; const number = Number(stock); return Number.isFinite(number) ? "剩余 " + number + " 份" : "库存充足"; }
+    function getProductTag(product, index) { if (product.isRecommended) return { text: "推荐", className: "bg-red-50 text-shop-red" }; if (Number(product.flowGB) >= 120) return { text: "热卖", className: "bg-orange-50 text-orange-600" }; return index % 2 === 0 ? { text: "入门", className: "bg-emerald-50 text-emerald-600" } : { text: "优选", className: "bg-sky-50 text-sky-600" }; }
+    function getSubTag(product) { if (Number(product.price) <= 29) return { text: "低月租", className: "bg-orange-50 text-orange-600" }; if (Number(product.flowGB) >= 150) return { text: "大流量", className: "bg-amber-50 text-amber-600" }; return { text: "30天有效", className: "bg-gray-100 text-gray-600" }; }
+    function getDescription(product, index) { return product.description || productDescriptions[index % productDescriptions.length]; }
+    function setProductsView(mode) { productsLoading.classList.toggle("hidden", mode !== "loading"); productsError.classList.toggle("hidden", mode !== "error"); productList.classList.toggle("hidden", mode !== "success"); }
+    function renderAuthState() { const currentUser = window.KasuAuth.getCurrentUser(); if (currentUser) { authGuestDesktop.classList.add("hidden"); authUserDesktop.classList.remove("hidden"); authGuestMobile.classList.add("hidden"); authUserMobile.classList.remove("hidden"); currentUserNameDesktop.textContent = currentUser.nickname || currentUser.phone; currentUserNameMobile.textContent = currentUser.nickname || currentUser.phone; adminLinkDesktop.classList.toggle("hidden", currentUser.role !== "admin"); adminLinkMobile.classList.toggle("hidden", currentUser.role !== "admin"); return; } authGuestDesktop.classList.remove("hidden"); authUserDesktop.classList.add("hidden"); authGuestMobile.classList.remove("hidden"); authUserMobile.classList.add("hidden"); adminLinkDesktop.classList.add("hidden"); adminLinkMobile.classList.add("hidden"); }
+    function renderFeaturedProduct(product) { if (!product) { featuredTag.textContent = "暂无商品"; featuredName.textContent = "暂时没有可展示的套餐"; featuredDescription.textContent = "请先在后端商品系统中创建商品，再回来刷新页面。"; featuredPrice.textContent = "--"; featuredFlow.textContent = "--"; featuredValidDays.textContent = "--"; featuredStock.textContent = "--"; featuredBuyBtn.disabled = true; return; } const tag = getProductTag(product, 0); appState.featuredProduct = product; featuredTag.textContent = tag.text; featuredName.textContent = product.name; featuredDescription.textContent = getDescription(product, 0); featuredPrice.textContent = formatPrice(product.price); featuredFlow.textContent = formatFlow(product.flowGB); featuredValidDays.textContent = formatValidDays(product.validDays); featuredStock.textContent = formatStock(product.stock); featuredBuyBtn.disabled = false; featuredBuyBtn.textContent = "立即购买"; }
+    function renderProductList(products) { productList.innerHTML = products.map(function (product, index) { const tag = getProductTag(product, index); const subTag = getSubTag(product); const isLoading = appState.creatingProductId === product.id; return '<article class="plan-card rounded-[28px] border ' + (product.isRecommended ? 'border-red-200 bg-gradient-to-b from-orange-50 via-white to-white' : 'border-shop-line bg-white') + ' p-6 shadow-lg">' + '<div class="flex items-start justify-between gap-4"><div><div class="flex items-center gap-2"><span class="rounded-full px-3 py-1 text-xs font-bold ' + escapeHtml(tag.className) + '">' + escapeHtml(tag.text) + '</span><span class="rounded-full px-3 py-1 text-xs font-bold ' + escapeHtml(subTag.className) + '">' + escapeHtml(subTag.text) + '</span></div><h3 class="mt-4 text-2xl font-extrabold text-gray-900">' + escapeHtml(product.name) + '</h3><p class="mt-2 text-sm leading-7 text-gray-500">' + escapeHtml(getDescription(product, index)) + '</p></div><div class="rounded-2xl bg-shop-soft px-3 py-2 text-right"><p class="text-xs text-gray-500">月租</p><p class="text-2xl font-extrabold text-shop-red">' + formatPrice(product.price) + '</p></div></div><div class="mt-6 rounded-3xl bg-gradient-to-br from-shop-soft to-white p-5 ring-1 ring-red-50"><p class="text-sm text-gray-500">套餐流量</p><p class="mt-2 text-3xl font-extrabold text-gray-900">' + escapeHtml(formatFlow(product.flowGB)) + '</p></div><div class="mt-5 grid grid-cols-2 gap-3 text-sm text-gray-500"><div class="rounded-2xl bg-gray-50 px-4 py-3">有效期：' + escapeHtml(formatValidDays(product.validDays)) + '</div><div class="rounded-2xl bg-gray-50 px-4 py-3">' + escapeHtml(formatStock(product.stock)) + '</div></div><button class="mt-6 w-full rounded-2xl px-4 py-3.5 text-sm font-bold text-white ' + (product.isRecommended ? 'bg-shop-red hover:bg-red-700' : 'bg-shop-dark hover:bg-shop-red') + ' disabled:cursor-not-allowed disabled:opacity-60" data-action="buy" data-product-id="' + escapeHtml(product.id) + '"' + (isLoading ? ' disabled' : '') + '>' + (isLoading ? '正在创建订单...' : '立即购买') + '</button></article>'; }).join(""); }
+    async function fetchProducts() { try { setProductsView("loading"); const response = await fetch(PRODUCT_API_URL, { method: "GET", headers: { Accept: "application/json" } }); const result = await response.json(); if (!response.ok || !result.success) throw new Error(result.message || "获取套餐失败"); appState.products = Array.isArray(result.data && result.data.items) ? result.data.items : []; renderFeaturedProduct(appState.products.find(function (item) { return item.isRecommended; }) || appState.products[0] || null); renderProductList(appState.products); setProductsView("success"); } catch (error) { productsErrorText.textContent = error.message || "无法连接后端服务，请先启动 Node.js 服务器。"; setProductsView("error"); } }
+    function openPaymentModal(order) { paymentMessage.classList.add("hidden"); appState.currentOrder = order || null; paymentPlanName.textContent = order ? order.planName : "请先登录"; paymentAmount.textContent = order ? formatPrice(order.price) : "--"; paymentAmountText.textContent = order ? formatPrice(order.price) + " 元" : "--"; paymentStatus.textContent = order ? order.statusLabel : "待登录"; if (!window.KasuAuth.getCurrentUser()) { paymentLoginRequired.classList.remove("hidden"); paymentContent.classList.add("hidden"); } else { paymentLoginRequired.classList.add("hidden"); paymentContent.classList.remove("hidden"); } paymentModal.classList.remove("hidden"); document.body.classList.add("overflow-hidden"); }
+    function closePaymentFlowModal() { if (appState.confirmingPayment) return; paymentModal.classList.add("hidden"); document.body.classList.remove("overflow-hidden"); }
+    function showPaymentMessage(message, success) { paymentMessage.textContent = message; paymentMessage.classList.remove("hidden", "bg-red-50", "text-red-600", "bg-emerald-50", "text-emerald-600"); paymentMessage.classList.add(success ? "bg-emerald-50" : "bg-red-50"); paymentMessage.classList.add(success ? "text-emerald-600" : "text-red-600"); }
+    async function startPurchase(product) { if (!product) return; if (!window.KasuAuth.getCurrentUser()) { openPaymentModal(null); return; } appState.creatingProductId = product.id; renderProductList(appState.products); if (appState.featuredProduct && appState.featuredProduct.id === product.id) { featuredBuyBtn.disabled = true; featuredBuyBtn.textContent = "正在创建订单..."; } const result = await window.KasuAuth.createOrder({ productId: product.id }); appState.creatingProductId = ""; renderProductList(appState.products); renderFeaturedProduct(appState.featuredProduct); if (!result.success) { alert(result.message); return; } openPaymentModal(result.order); }
+    async function confirmPaid() { if (!appState.currentOrder) { showPaymentMessage("当前没有可确认的订单。", false); return; } appState.confirmingPayment = true; confirmPaidBtn.disabled = true; confirmPaidBtn.textContent = "提交中..."; showPaymentMessage("正在提交付款确认，请稍候...", true); const result = await window.KasuAuth.confirmOrderPayment(appState.currentOrder.id); appState.confirmingPayment = false; confirmPaidBtn.disabled = false; confirmPaidBtn.textContent = "我已付款"; if (!result.success) { showPaymentMessage(result.message, false); return; } appState.currentOrder = result.order; paymentStatus.textContent = result.order.statusLabel; showPaymentMessage(result.message, true); setTimeout(function () { window.location.href = "orders.html"; }, 900); }
+    async function handleLogout() { await window.KasuAuth.logoutUser(); renderAuthState(); window.location.href = "index.html"; }
+    menuBtn.addEventListener("click", function () { mobileMenu.classList.toggle("hidden"); });
+    document.querySelectorAll("#mobileMenu a").forEach(function (link) { link.addEventListener("click", function () { mobileMenu.classList.add("hidden"); }); });
+    logoutBtnDesktop.addEventListener("click", handleLogout); logoutBtnMobile.addEventListener("click", handleLogout); retryProductsBtn.addEventListener("click", fetchProducts); featuredBuyBtn.addEventListener("click", function () { startPurchase(appState.featuredProduct); }); productList.addEventListener("click", function (event) { const button = event.target.closest('[data-action="buy"]'); if (!button) return; const productId = button.getAttribute("data-product-id"); const product = appState.products.find(function (item) { return String(item.id) === String(productId); }) || null; startPurchase(product); }); confirmPaidBtn.addEventListener("click", confirmPaid); closePaymentModal.addEventListener("click", closePaymentFlowModal); paymentModalBackdrop.addEventListener("click", closePaymentFlowModal); window.addEventListener("keydown", function (event) { if (event.key === "Escape" && !paymentModal.classList.contains("hidden")) closePaymentFlowModal(); });
+    (async function initPage() { renderAuthState(); await window.KasuAuth.getCurrentUserRecord().catch(function () { return null; }); renderAuthState(); await fetchProducts(); })();
+  </script>
+</body>
+</html>

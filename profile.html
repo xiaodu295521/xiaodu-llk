@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>个人中心 - 卡速购</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = { theme: { extend: { colors: { shop: { red: '#e1251b', orange: '#ff7a00', dark: '#1f2329', soft: '#fff6f0', line: '#f3dfd6' } } } } };
+  </script>
+  <style>
+    body {
+      font-family: "Noto Sans SC", sans-serif;
+      background: radial-gradient(circle at top left, rgba(255,122,0,.14), transparent 22%), radial-gradient(circle at top right, rgba(225,37,27,.10), transparent 26%), linear-gradient(180deg, #fff9f6 0%, #fff 40%, #fffaf8 100%);
+      color: #1f2329;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <header class="border-b border-white/70 bg-white/90 backdrop-blur-xl">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <a href="index.html" class="flex items-center gap-3">
+        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-shop-red to-shop-orange text-lg font-extrabold text-white shadow-lg">卡</div>
+        <div><p class="text-lg font-extrabold text-shop-dark">卡速购</p><p class="text-xs text-gray-500">手机流量卡优选商城</p></div>
+      </a>
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-sm font-semibold text-gray-600 hover:text-shop-red">首页</a>
+        <a href="orders.html" class="text-sm font-semibold text-gray-600 hover:text-shop-red">我的订单</a>
+        <a id="adminLink" href="admin.html" class="hidden text-sm font-semibold text-gray-600 hover:text-shop-red">管理后台</a>
+        <button id="logoutBtn" class="rounded-full bg-shop-dark px-4 py-2 text-sm font-bold text-white hover:bg-shop-red">退出登录</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <section class="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+      <div class="rounded-[32px] bg-gradient-to-br from-shop-red via-shop-orange to-[#ff9a31] p-1 shadow-lg">
+        <div class="rounded-[30px] bg-white/95 p-6 sm:p-8">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="text-sm font-extrabold uppercase tracking-[0.24em] text-shop-red">Profile</p>
+              <h1 class="mt-3 text-3xl font-extrabold text-gray-900">个人中心</h1>
+              <p class="mt-3 text-sm leading-7 text-gray-500">这里展示当前登录账号的基础信息，以及扫码支付订单的状态概览。</p>
+            </div>
+            <div class="rounded-3xl bg-shop-soft px-4 py-3 text-right"><p class="text-xs text-gray-500">账号状态</p><p class="mt-1 text-sm font-bold text-shop-dark">已登录</p></div>
+          </div>
+          <div class="mt-8 rounded-3xl bg-shop-dark p-5 text-white">
+            <p class="text-sm text-white/70">当前用户</p>
+            <p id="profileNickname" class="mt-2 text-2xl font-extrabold">--</p>
+            <div class="mt-5 grid gap-4 sm:grid-cols-2">
+              <div class="rounded-2xl bg-white/10 p-4"><p class="text-xs text-white/60">手机号</p><p id="profilePhone" class="mt-2 text-lg font-bold">--</p></div>
+              <div class="rounded-2xl bg-white/10 p-4"><p class="text-xs text-white/60">注册时间</p><p id="profileCreatedAt" class="mt-2 text-lg font-bold">--</p></div>
+            </div>
+          </div>
+          <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+            <a href="orders.html" class="inline-flex items-center justify-center rounded-full bg-shop-red px-6 py-3 text-sm font-bold text-white hover:bg-red-700">查看我的订单</a>
+            <a href="index.html#plans" class="inline-flex items-center justify-center rounded-full border border-gray-300 px-6 py-3 text-sm font-bold text-gray-700 hover:border-shop-red hover:text-shop-red">继续选购套餐</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid gap-6">
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div class="rounded-3xl border border-shop-line bg-white p-5 shadow-lg"><p class="text-sm text-gray-500">订单总数</p><p id="statsTotal" class="mt-2 text-3xl font-extrabold text-shop-dark">0</p></div>
+          <div class="rounded-3xl border border-shop-line bg-white p-5 shadow-lg"><p class="text-sm text-gray-500">待支付</p><p id="statsPending" class="mt-2 text-3xl font-extrabold text-red-600">0</p></div>
+          <div class="rounded-3xl border border-shop-line bg-white p-5 shadow-lg"><p class="text-sm text-gray-500">待确认</p><p id="statsPaidPending" class="mt-2 text-3xl font-extrabold text-amber-600">0</p></div>
+          <div class="rounded-3xl border border-shop-line bg-white p-5 shadow-lg"><p class="text-sm text-gray-500">已完成</p><p id="statsCompleted" class="mt-2 text-3xl font-extrabold text-emerald-600">0</p></div>
+        </div>
+
+        <div class="rounded-[32px] border border-shop-line bg-white p-6 shadow-lg sm:p-8">
+          <div class="flex items-center justify-between gap-4">
+            <div><p class="text-sm font-extrabold uppercase tracking-[0.24em] text-shop-red">Recent Orders</p><h2 class="mt-2 text-2xl font-extrabold text-gray-900">最近订单</h2></div>
+            <a href="orders.html" class="text-sm font-bold text-shop-red hover:text-red-700">查看全部</a>
+          </div>
+          <div id="recentOrders" class="mt-6 space-y-4"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="auth.js"></script>
+  <script>
+    const logoutBtn = document.getElementById('logoutBtn');
+    const adminLink = document.getElementById('adminLink');
+
+    function formatDate(value) {
+      const date = new Date(value);
+      return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+    }
+
+    async function renderProfile(currentUser) {
+      const stats = await window.KasuAuth.getOrderStats();
+      const orders = await window.KasuAuth.getCurrentUserOrders();
+      const recentOrders = orders.slice(0, 3);
+      document.getElementById('profileNickname').textContent = currentUser.nickname || '未设置昵称';
+      document.getElementById('profilePhone').textContent = currentUser.phone || '--';
+      document.getElementById('profileCreatedAt').textContent = currentUser.createdAt ? formatDate(currentUser.createdAt) : '本地模拟账号';
+      document.getElementById('statsTotal').textContent = stats.total;
+      document.getElementById('statsPending').textContent = stats.pending;
+      document.getElementById('statsPaidPending').textContent = stats.paidPendingConfirm;
+      document.getElementById('statsCompleted').textContent = stats.completed;
+      const recentOrdersContainer = document.getElementById('recentOrders');
+      if (!recentOrders.length) { recentOrdersContainer.innerHTML = '<div class="rounded-3xl bg-shop-soft p-6 text-center text-sm text-gray-500">你还没有订单，快去首页扫码下单吧。</div>'; return; }
+      recentOrdersContainer.innerHTML = recentOrders.map(function (order) { return '<div class="rounded-3xl border border-shop-line bg-shop-soft/40 p-5"><div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><p class="text-sm text-gray-500">订单号：' + order.orderNo + '</p><h3 class="mt-2 text-xl font-extrabold text-gray-900">' + order.planName + '</h3><p class="mt-1 text-sm text-gray-500">' + order.flow + ' · ' + order.price + ' 元</p></div><span class="rounded-full px-4 py-2 text-sm font-bold ' + order.statusClass + '">' + order.statusLabel + '</span></div></div>'; }).join('');
+    }
+
+    async function initPage() {
+      const currentUser = await window.KasuAuth.getCurrentUserRecord();
+      if (!currentUser) { window.location.href = 'login.html'; return; }
+      if (currentUser.role === 'admin') { adminLink.classList.remove('hidden'); }
+      logoutBtn.addEventListener('click', async function () { await window.KasuAuth.logoutUser(); window.location.href = 'index.html'; });
+      await renderProfile(currentUser);
+    }
+
+    initPage();
+  </script>
+</body>
+</html>

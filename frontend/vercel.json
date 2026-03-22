@@ -1,0 +1,28 @@
+﻿{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://api.295521.top/api/:path*"
+    },
+    {
+      "source": "/products",
+      "destination": "https://api.295521.top/products"
+    },
+    {
+      "source": "/products/:path*",
+      "destination": "https://api.295521.top/products/:path*"
+    },
+    {
+      "source": "/orders",
+      "destination": "https://api.295521.top/orders"
+    },
+    {
+      "source": "/orders/:path*",
+      "destination": "https://api.295521.top/orders/:path*"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "https://api.295521.top/admin/:path*"
+    }
+  ]
+}
